@@ -37,24 +37,32 @@ def player():
     print("\nCześć", player_name + "!\nZaczynamy grę!", "\n")
     return player_name
 
-
+drawn_letter = []
 # LOSOWANIE LITERY
 def letter():
     global letter_draw
+
     letter_draw = random.choice(alphabet())
     print("Wylosowana litera to: ", letter_draw)
+    if letter_draw in drawn_letter:
+        print(letter_draw, "JUŻ BYŁO. KOLEJNE LOSOWANIE")
+        letter()
+    drawn_letter.append(letter_draw)
     return letter_draw
 
 
 # SPRAWDZANIE ODPOWIEDZI I PRZYPISANIE PKT
-def countries_answer(arg, player, letter):
+def countries_answer(player, letter):
     player_countries_answer = input("Podaj nazwę państwa: ").capitalize()
-    bot_countries_answer = random.choice(countries[letter])
+    wrong_name_country = player_countries_answer[0] != letter_draw
+    if wrong_name_country:
+        print("Podana nazwa kraju nie zaczyna się na literę " + letter_draw)
+    bot_countries_answer = random.choice(countries[letter_draw])
     for key in countries:
-        if key == arg:
+        if key == letter_draw:
             print(bot_countries_answer)
 
-    if player_countries_answer == '':
+    if player_countries_answer == '' or wrong_name_country:
         player_points.append(0)
         bot_points.append(15)
     elif player_countries_answer != bot_countries_answer:
@@ -66,14 +74,17 @@ def countries_answer(arg, player, letter):
     else:
         print("Coś poszło nie tak")
 
-def cities_answer(arg, player, letter):
+def cities_answer( player, letter):
     player_cities_answer = input("Podaj nazwę miasta: ").capitalize()
-    bot_cities_answer = random.choice(cities[letter])
+    wrong_name_city = player_cities_answer[0] != letter_draw
+    if wrong_name_city:
+        print("Podana nazwa miasta nie zaczyna się na literę " + letter_draw)
+    bot_cities_answer = random.choice(cities[letter_draw])
     for key in cities:
-        if key == arg:
+        if key == letter_draw:
             print(bot_cities_answer)
 
-    if player_cities_answer == '':
+    if player_cities_answer == '' or wrong_name_city:
         player_points.append(0)
         bot_points.append(15)
     elif player_cities_answer != bot_cities_answer:
@@ -113,8 +124,10 @@ def winner(arg):
 # kolejni gracze?
 
 countries = {
-    "A": ["Afganistan", "Albania", "Algieria", "Andora", "Angola", "Antigua i Barbuda", "Arabia Saudyjska", "Argentyna", "Armenia", "Australia", "Austria", "Azerbejdżan"],
-    "B": ["Bahamy", "Bahrajn", "Bangladesz", "Barbados", "Belgia", "Belize", "Benim", "Bhutan", "Białoruś", "Boliwia", "Bośnia i Hercegowina", "Botswana", "Brazylia", "Brunei", "Bułgaria", "Burkina Faso", "Burundi"],
+    "A": ["Afganistan", "Albania", "Algieria", "Andora", "Angola", "Antigua i Barbuda", "Arabia Saudyjska", "Argentyna",
+          "Armenia", "Australia", "Austria", "Azerbejdżan"],
+    "B": ["Bahamy", "Bahrajn", "Bangladesz", "Barbados", "Belgia", "Belize", "Benim", "Bhutan", "Białoruś", "Boliwia",
+          "Bośnia i Hercegowina", "Botswana", "Brazylia", "Brunei", "Bułgaria", "Burkina Faso", "Burundi"],
     "C": ["Chile", "Chiny", "Chorwacja", "Cypr", "Czad", "Czarnogóra", "Czechy"],
     "D": ["Dania", "Demokratyczna Republika Konga", "Dominikana", "Dżibuti"],
     "E": ["Egipt", "Ekwador", "Erytrea", "Estonia", "Eswatini", "Etiopia"],
@@ -123,50 +136,69 @@ countries = {
     "H": ["Haiti", "Hiszpania", "Holandia", "Honduras"],
     "I": ["Indie", "Indonezja", "Irak", "Iran", "Irlandia", "Islandia", "Izrael"],
     "J": ["Jamajka", "Japonia", "Jemen", "Jordania"],
-    "K": ["Kambodża", "Kamerun", "Kanada", "Katar", "Kazachstan", "Kenia", "Kirgistan", "Kiribati", "Kolumbia", "Komory", "Kongo", "Korea Południoa", "Korea Północna", "Kostaryka", "Kuba", "Kuwejt"],
+    "K": ["Kambodża", "Kamerun", "Kanada", "Katar", "Kazachstan", "Kenia", "Kirgistan", "Kiribati", "Kolumbia", "Komory",
+          "Kongo", "Korea Południoa", "Korea Północna", "Kostaryka", "Kuba", "Kuwejt"],
     "L": ["Laos", "Lesotho", "Liban", "Liberia", "Libia", "Liechtenstein", "Litwa", "Luksemburg"],
     "Ł": ["Łotwa"],
-    "M": ["Macedonia Północna", "Madagaskar", "Malawi", "Malediwy", "Malezja", "Mali", "Malta", "Maroko", "Mauretania", "Mauritus", "Meksyk", "Mikronezja", "Mjanma", "Mołdawia", "Monako", "Mongolia", "Mozambik"],
+    "M": ["Macedonia Północna", "Madagaskar", "Malawi", "Malediwy", "Malezja", "Mali", "Malta", "Maroko", "Mauretania",
+          "Mauritus", "Meksyk", "Mikronezja", "Mjanma", "Mołdawia", "Monako", "Mongolia", "Mozambik"],
     "N": ["Namibia", "Nauru", "Nepal", "Niemcy", "Niger", "Nigeria", "Nikaragua", "Norwegia", "Nowa Zelandia"],
     "O": ["Oman"],
     "P": ["Pakistan", "Palau", "Panama", "Papua-Nowa Gwinea", "Paragwaj", "Peru", "Polska", "Południowa Afryka", "Portugalia"],
     "R": ["Republika Środkowoafrykańska", "Republika Zielonego Przylądka", "Rosja", "Rumunia", "Rwanda"],
-    "S": ["Saint Kitts i Nevis", "Saint Lucia", "Saint Vincent i Grenadyny", "Salwador", "Samoa", "San Marino", "Senegal", "Serbia", "Seszele", "Sierra Leone", "Singapur", "Słowacja", "Słowenia", "Somalia", "Sri Lanka",
+    "S": ["Saint Kitts i Nevis", "Saint Lucia", "Saint Vincent i Grenadyny", "Salwador", "Samoa", "San Marino", "Senegal",
+          "Serbia", "Seszele", "Sierra Leone", "Singapur", "Słowacja", "Słowenia", "Somalia", "Sri Lanka",
           "Stany Zjednoczone", "Sudan", "Sudan Południowy", "Surinam", "Syria", "Szwajcaria", "Szwecja"],
-    "T": ["Tadżykistan", "Tajlandia", "Tanzania", "Timor Wschodni", "Togo", "Tonga", "Trynidad i Tobago", "Tunezja", "Turcja", "Turkmenistan", "Tuvalu"],
+    "T": ["Tadżykistan", "Tajlandia", "Tanzania", "Timor Wschodni", "Togo", "Tonga", "Trynidad i Tobago", "Tunezja", "Turcja",
+          "Turkmenistan", "Tuvalu"],
     "U": ["Uganda", "Ukraina", "Urugwaj", "Uzbekistan"],
     "V": ["Vanuatu"],
-    "W": ["Watykan", "Wenezuela", "Węgry", "Wielka Brytania", "Wietnam", "Włochy", "Wybrzeże Kości Słoniowej", "Wyspy Marshalla", "Wyspy Salomona", "Wyspy Świętego Tomasza i Książeca"],
+    "W": ["Watykan", "Wenezuela", "Węgry", "Wielka Brytania", "Wietnam", "Włochy", "Wybrzeże Kości Słoniowej", "Wyspy Marshalla",
+          "Wyspy Salomona", "Wyspy Świętego Tomasza i Książeca"],
     "Z": ["Zambia", "Zimbabwe", "Zjednoczone Emiraty Arabskie"]
     }
 
 cities = {
-    "A": ["Augustów", "Aleksandrów Łódzki", "Andrychów", "Aleksandrów Kujawski", "Alwernia", "Annopol", "Andrespol", "Ankara", "Amman", "Abu Zabi", "Amsterdam", "Ateny", "Austin"],
-    "B": ["Bełchatów", "Białystok", "Bielsko-Biała", "Biłgoraj", "Biskupiec", "Bochnia", "Brzeg", "Bydgoszcz", "Bytom", "Bagdad", "Baku", "Barcelona", "Belgrad", "Berlin", "Bilbao", "Bogota", "Bombaj", "Boston", "Bratysława",
+    "A": ["Augustów", "Aleksandrów Łódzki", "Andrychów", "Aleksandrów Kujawski", "Alwernia", "Annopol", "Andrespol", "Ankara",
+          "Amman", "Abu Zabi", "Amsterdam", "Ateny", "Austin"],
+    "B": ["Bełchatów", "Białystok", "Bielsko-Biała", "Biłgoraj", "Biskupiec", "Bochnia", "Brzeg", "Bydgoszcz", "Bytom", "Bagdad",
+          "Baku", "Barcelona", "Belgrad", "Berlin", "Bilbao", "Bogota", "Bombaj", "Boston", "Bratysława",
           "Budapeszt", "Buenos Aires", "Bukareszt"],
-    "C": ["Cedynia", "Chełm", "Chojnice", "Chorzów", "Ciechanów", "Ciechocinek", "Cieszyn", "Czaplinek", "Częstochowa", "Canberra", "Caracas", "Casablanca", "Charków", "Chartum", "Chicago"],
-    "D": ["Darłowo", "Dąbrowa Górnicza", "Dębica", "Dęblin", "Dębno", "Dobre Miasto", "Dakar", "Dallas", "Denver", "Detroit", "Doha", "Dortmund", "Drezno", "Dubaj", "Dublin", "Dżakarta"],
+    "C": ["Cedynia", "Chełm", "Chojnice", "Chorzów", "Ciechanów", "Ciechocinek", "Cieszyn", "Czaplinek", "Częstochowa", "Canberra",
+          "Caracas", "Casablanca", "Charków", "Chartum", "Chicago"],
+    "D": ["Darłowo", "Dąbrowa Górnicza", "Dębica", "Dęblin", "Dębno", "Dobre Miasto", "Dakar", "Dallas", "Denver", "Detroit", "Doha",
+          "Dortmund", "Drezno", "Dubaj", "Dublin", "Dżakarta"],
     "E": ["Elbląg", "Ełk", "Edmonton", "Edynburg", "El Paso", "Erywań", "Essen"],
     "F": ["Frampol", "Frombork", "Filadelfia", "Florencja", "Frankfurt"],
-    "G": ["Gdańsk", "Gdynia", "Giżycko", "Gliwice", "Głogów", "Gniezno", "Gorlice", "Gorzów Wielkopolski", "Grudziądz", "Gryfice", "Genewa", "Genua", "Georgetown", "Goteborg", "Graz", "Guadalajara", "Gwatemala"],
+    "G": ["Gdańsk", "Gdynia", "Giżycko", "Gliwice", "Głogów", "Gniezno", "Gorlice", "Gorzów Wielkopolski", "Grudziądz", "Gryfice",
+          "Genewa", "Genua", "Georgetown", "Goteborg", "Graz", "Guadalajara", "Gwatemala"],
     "H": ["Hajnówka", "Hel", "Hrubieszów", "Haga", "Hamburg", "Hanoi", "Hawana", "Helsinki", "Hong Kong", "Houston"],
     "I": ["Iława", "Imielin", "Inowrocław", "Indianapolis", "Irkuck", "Istanbuł"],
     "J": ["Jasło", "Jastarnia", "Jaworzno", "Jelenia Góra", "Jordanów", "Jakuck", "Jerozolima", "Johannesburg"],
-    "K": ["Kalisz", "Katowice", "Kęty", "Kielce", "Kłodzko", "Kołobrzeg", "Kostrzyn", "Kraków", "Krosno", "Krynic-Zdrój", "Kutno", "Kair", "Kansas", "Kazań", "Kiszyniów", "Kolonia", "Kopenhaga", "Kuala Lampur"],
-    "L": ["Legnica", "Leszno", "Limanowa", "Lublin", "Lubin", "Lidzbark Warmiński", "Lagos", "Las Vegas", "Lipsk", "Lizbona", "Liverpool", "Londyn", "Los Angeles", "Lwów", "Lyon"],
+    "K": ["Kalisz", "Katowice", "Kęty", "Kielce", "Kłodzko", "Kołobrzeg", "Kostrzyn", "Kraków", "Krosno", "Krynic-Zdrój", "Kutno",
+          "Kair", "Kansas", "Kazań", "Kiszyniów", "Kolonia", "Kopenhaga", "Kuala Lampur"],
+    "L": ["Legnica", "Leszno", "Limanowa", "Lublin", "Lubin", "Lidzbark Warmiński", "Lagos", "Las Vegas", "Lipsk", "Lizbona",
+          "Liverpool", "Londyn", "Los Angeles", "Lwów", "Lyon"],
     "Ł": ["Łódź", "Łańcut", "Łagów", "Łeba", "Łęczna", "Łęknica", "Łomża", "Łowicz"],
-    "M": ["Malbork", "Mielec", "Mielno", "Międzyzdroje", "Mikołajki", "Morąg", "Madryt", "Malaga", "Malmo", "Manchester", "Manila", "Marsylia", "Medellin", "Mediolan", "Meksyk", "Melbourne", "Miami", "Mińsk", "Monachium",
+    "M": ["Malbork", "Mielec", "Mielno", "Międzyzdroje", "Mikołajki", "Morąg", "Madryt", "Malaga", "Malmo", "Manchester",
+          "Manila", "Marsylia", "Medellin", "Mediolan", "Meksyk", "Melbourne", "Miami", "Mińsk", "Monachium",
           "Monako", "Montevideo", "Montreal", "Moskwa"],
-    "N": ["Nowa Ruda", "Nowy Sącz", "Nowy Targ", "Nysa", "Nairobi", "Nantes", "Neapol", "Nicea", "Nikozja", "Norymberga", "New Delhi", "New York"],
-    "O": ["Olkusz", "Olsztyn", "Olsztynek", "Opole", "Ostrołęka", "Ostróda", "Oświęcim", "Otwock", "Odessa", "Oklahoma", "Orlando", "Osaka", "Oslo", "Ostrawa", "Ottawa"],
-    "P": ["Pabianice", "Pacanów", "Piła", "Płock", "Prószków", "Przemyśl", "Pułtusk", "Palermo", "Paryż", "Pekin", "Perth", "Phoneix", "Porto", "Praga"],
+    "N": ["Nowa Ruda", "Nowy Sącz", "Nowy Targ", "Nysa", "Nairobi", "Nantes", "Neapol", "Nicea", "Nikozja", "Norymberga",
+          "New Delhi", "New York"],
+    "O": ["Olkusz", "Olsztyn", "Olsztynek", "Opole", "Ostrołęka", "Ostróda", "Oświęcim", "Otwock", "Odessa", "Oklahoma",
+          "Orlando", "Osaka", "Oslo", "Ostrawa", "Ottawa"],
+    "P": ["Pabianice", "Pacanów", "Piła", "Płock", "Prószków", "Przemyśl", "Pułtusk", "Palermo", "Paryż", "Pekin", "Perth",
+          "Phoneix", "Porto", "Praga"],
     "R": ["Racibórz", "Radom", "Ruda Śląska", "Rybnik", "Rzeszów", "Rejkiawik", "Rio de Janeiro", "Rotterdam", "Ryga", "Rzym"],
-    "S": ["Sandomierz", "Sanok", "Słupsk", "Sopot", "Sosnowiec", "Stalowa Wola", "Suwałki", "Szczecin", "Sacramento", "Saloniki", "Salt Lake City", "San Diego", "San Francisco", "Santiago", "Sao Paulo", "Sapporo",
+    "S": ["Sandomierz", "Sanok", "Słupsk", "Sopot", "Sosnowiec", "Stalowa Wola", "Suwałki", "Szczecin", "Sacramento", "Saloniki",
+          "Salt Lake City", "San Diego", "San Francisco", "Santiago", "Sao Paulo", "Sapporo",
           "Saragossa", "Sarajewo", "Seattle", "Sewila", "Sofia", "Sydney", "Sztokholm"],
-    "T": ["Tarnobrzeg", "Tarnów", "Tczew", "Tomaszów Mazowiecki", "Toruń", "Tychy", "Tel Aviv", "Texas", "Tibilisi", "Tirana", "Tokyo", "Toronto", "Turyn", ],
+    "T": ["Tarnobrzeg", "Tarnów", "Tczew", "Tomaszów Mazowiecki", "Toruń", "Tychy", "Tel Aviv", "Texas", "Tibilisi", "Tirana",
+          "Tokyo", "Toronto", "Turyn", ],
     "U": ["Ujazd", "Ujście", "Uniejów", "Ustka", "Ustroń", "Ustrzyki Dolne", "Utrecht"],
     "V": ["Vancouver", "Virgina Beach", "Vitoria", "Vicenza", "Valencia", "Veracruz", "Verona"],
-    "W": ["Wadowice", "Wałbrzych", "Warka", "Warszawa", "Wieliczka", "Władysławowo", "Wrocław", "Washington", "Wuhan", "Winnipeg", "West Bromwich", "Watford", "Wolfsburg"],
+    "W": ["Wadowice", "Wałbrzych", "Warka", "Warszawa", "Wieliczka", "Władysławowo", "Wrocław", "Washington", "Wuhan",
+          "Winnipeg", "West Bromwich", "Watford", "Wolfsburg"],
     "Z": ["Zakopane", "Zamość", "Zgierz", "Zabrze", "Złotoryja", "Zagrzeb", "Zadar", "Zurych", ]
     }
 
@@ -180,23 +212,14 @@ bot_points = []
 def countries_cities():
     print("GRA W PAŃSTWA I MIASTA\n")
     player()
-    drawn_letter = []
     round = 0
     while round < 10:
         print('|| RUNDA', round + 1, "||\n")
-        new_letter = letter()
-        for l in drawn_letter:
-            if new_letter in drawn_letter:
-                print([new_letter], "JUŻ BYŁA. KOLEJNE LOSOWANIE")
-                new_letter = letter()
-                new_letter
-            else:
-                new_letter
-        drawn_letter.append(new_letter)
+        letter()
         print("CZAS START")
         countdown(1)
-        countries_answer(new_letter, player_name, letter_draw)
-        cities_answer(new_letter, player_name, letter_draw)
+        countries_answer(player_name, letter_draw)
+        cities_answer(player_name, letter_draw)
         print()
         print(player_name + ":", player_points)
         print("Komputer:", bot_points,"\n")
@@ -209,6 +232,7 @@ def countries_cities():
         print()
         if round == 10:
             print("KONIEC GRY!\n")
+
 
 countries_cities()
 winner(player_name)
