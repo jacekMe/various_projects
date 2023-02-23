@@ -1,6 +1,6 @@
-# other_own_exercises
+# various projects
 
-1. pizza_bot.py - rozbudowana zabawa z 'if' dla utrwalenia wiedzy
-2. państwa & miasta - własny pomysł
-3. wisielec - pomysł z książki "Programista samouk" - Cory Althoff
-4. game_of_war - pomysł z książki "Programista samouk" - Cory Althoff
+1. pizza_bot.py - playing with 'if' 
+2. państwa & miasta - own idea 
+3. 'hangman' - the game of hangman - inspiration from a book "Programista samouk" - Cory Althoff
+4. game_of_war - card game of war - inspiration from a book "Programista samouk" - Cory Althoff
